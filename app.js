@@ -8,11 +8,18 @@ const logger = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 const indexRouter = require('./routes/index');
+const rateLimit = require("express-rate-limit");
 
 const app = express();
 
-app.use(helmet());
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 100
+});
 
+app.use(limiter);
+
+app.use(helmet());
 
 app.use(cors({
   credentials: true,
@@ -27,7 +34,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 
